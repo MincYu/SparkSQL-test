@@ -1,0 +1,5 @@
+# tpch dbgen specific
+dbgen/*.tbl
+dbgen/*.o
+dbgen/dbgen
+dbgen/qgen
