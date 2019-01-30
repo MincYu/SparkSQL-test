@@ -11,30 +11,6 @@ set -euxo pipefail
 SCALE=1
 QUERY=30
 
-download_data(){
-    cluster_name=$1
-    logs_dir=$2
-
-    echo "download workload data to master..."
-    # flintrock run-command --master-only $cluster_name 'mkdir -p /home/ec2-user/logs/'${logs_dir}''
-
-    # flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/cp-workerload.sh $'{logs_dir}''
-
-    flintrock run-command --master-only $cluster_name 'workers=(`cat /home/ec2-user/hadoop/conf/slaves`); 
-    if ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no test -e /home/ec2-user/logs/workerLoads.txt; 
-         then scp -o StrictHostKeyChecking=no ec2-user@${workers[0]}:/home/ec2-user/logs/workerLoads.txt /home/ec2-user/logs/'${logs_dir}'/workerLoads0.txt;
-        ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no "rm /home/ec2-user/logs/workerLoads.txt";fi;'
-
-    flintrock run-command --master-only $cluster_name 'workers=(`cat /home/ec2-user/hadoop/conf/slaves`); 
-     if ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no test -e /home/ec2-user/logs/workerLoads.txt; 
-         then scp -o StrictHostKeyChecking=no ec2-user@${workers[1]}:/home/ec2-user/logs/workerLoads.txt /home/ec2-user/logs/'${logs_dir}'/workerLoads1.txt;
-         ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no "rm /home/ec2-user/logs/workerLoads.txt";fi;'
-
-
-    # flintrock run-command --master-only $cluster_name 'mkdir -p /home/ec2-user/logs/'$datetime'/'$item';workers=(`cat /home/ec2-user/hadoop/conf/slaves`); scp -o StrictHostKeyChecking=no ec2-user@${workers[0]}:/home/ec2-user/logs/workerLoads.txt /home/ec2-user/logs/'$datetime'/'$item'/workerLoads0_'$item'.txt;ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no "rm /home/ec2-user/logs/workerLoads.txt"'
-
-    # flintrock run-command --master-only $cluster_name 'workers=(`cat /home/ec2-user/hadoop/conf/slaves`); scp -o StrictHostKeyChecking=no ec2-user@${workers[1]}:/home/ec2-user/logs/workerLoads.txt /home/ec2-user/logs/'$datetime'/'$item'/workerLoads1_'$item'.txt;ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no "rm /home/ec2-user/logs/workerLoads.txt"'
-}
 test_bandwidth(){
     cluster_name=$1
     logs_dir=$2
@@ -68,6 +44,8 @@ test_all(){
     echo "Restart alluxio & hdfs"
     flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/restart.sh'
 
+    test_bandwidth $cluster_name $logs_dir
+
     flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/auto-test-2.sh pre '${SCALE}' '${QUERY}''
     flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/auto-test-2.sh all '${SCALE}' '${QUERY}' > /home/ec2-user/logs/'${logs_dir}'/autotest.log'
 
@@ -81,7 +59,7 @@ test_all(){
 test_all_wapper(){
     cluster_name=$1
 
-    for((i=1;i<=10;i++)); do
+    for((i=2;i<=10;i++)); do
         SCALE=$i
         test_all $cluster_name
     done

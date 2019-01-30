@@ -45,12 +45,14 @@ def extract_lateny(path):
                 if match is None:
                     continue
                 groups = match.groupdict()
-                records.append(float(groups['times']))
+                typ = p.split('/')[-2]
+                records.append((typ, float(groups['times'])))
 
     print('latency: {}'.format(records))
+    records.sort(key=lambda e: e[0], reverse=True)
 
     gap = lambda f, s: (f - s)/s
-    print('gap: {}'.format(gap(records[0], records[1])))
+    print('gap: {}'.format(gap(records[0][1], records[1][1])))
 
 
 @click.command()
