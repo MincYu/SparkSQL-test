@@ -6,7 +6,7 @@ import math
 def extract_info(path):
     name = path.split('/')[-1]
     # files_path = glob.glob(f'{path}/{name}/workerLoad*')
-    files_path = glob.glob('{}/shuffle/workerLoad*'.format{path})
+    files_path = glob.glob('{}/shuffle/workerLoad*'.format(path))
     records = {}
     for p in files_path:
         with open(p) as f:
