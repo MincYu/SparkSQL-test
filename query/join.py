@@ -2,6 +2,7 @@ from pyspark import SparkConf, SparkContext
 # from pyspark.sql import HiveContext
 from pyspark.sql import SparkSession
 from pyspark.sql import Row
+import time
 
 def join_two_tables():
 	spark = SparkSession.builder.appName("Join two tables").getOrCreate()
@@ -31,13 +32,21 @@ def join_two_tables():
 		)
 
 	logger.info('Begin executing query')
+	begin_time = now()
+
 	result_df.show()
-	logger.info('End executing query')
+
+	exe_time = gap_time(begin_time)
+	logger.info('End executing query. Time: {}'.format(exe_time))
+
+	spark.catalog.clearCache()
 
 def get_master():
 	with open('/home/ec2-user/hadoop/conf/masters', 'r') as f:
 		return f.readline().rstrip()
 
+now = lambda: time.time()
+gap_time = lambda past_time : int((now() - past_time) * 1000)
 
 splitter = lambda l: l.split('|')
 convert_orders = lambda rdd: rdd.map(splitter).map(lambda p: Row(o_orderkey=p[0], o_custkey=p[1], o_orderstatus=p[2], o_totalprice=p[3], \
