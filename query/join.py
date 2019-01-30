@@ -15,6 +15,7 @@ def get_args():
 def join_two_tables(args):
 	spark = SparkSession.builder.appName(args.app).getOrCreate()
 	sc = spark.sparkContext
+	sc.setLogLevel("TRACE")
 
 	log4jLogger = sc._jvm.org.apache.log4j
 	logger = log4jLogger.LogManager.getLogger('Join')
