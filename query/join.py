@@ -13,7 +13,7 @@ def get_args():
     return parser.parse_args()
 
 def join_two_tables(args):
-	spark = SparkSession.builder.appName(arg.app).getOrCreate()
+	spark = SparkSession.builder.appName(args.app).getOrCreate()
 	sc = spark.sparkContext
 
 	log4jLogger = sc._jvm.org.apache.log4j
