@@ -6,7 +6,7 @@ import math
 def extract_info(path):
     name = path.split('/')[-1]
     # files_path = glob.glob(f'{path}/{name}/workerLoad*')
-    files_path = glob.glob(f'{path}/shuffle/workerLoad*')
+    files_path = glob.glob('{}/shuffle/workerLoad*'.format{path})
     records = {}
     for p in files_path:
         with open(p) as f:
@@ -32,7 +32,7 @@ def extract_info(path):
 def extract_lateny(path):
     name = path.split('/')[-1].split('_')[0]
 
-    files_path = glob.glob(f'{path}/*/scale*')
+    files_path = glob.glob('{}/*/scale*'.format(path))
 
     content_regex = re.compile(r'(?P<date>\S+) (?P<time>\S+) (?P<level>\S+)  TpchQuery:54 - Finish running query (?P<query>\S+)\. Time : (?P<times>\S+)')
 
@@ -47,10 +47,10 @@ def extract_lateny(path):
                 groups = match.groupdict()
                 records.append(float(groups['times']))
 
-    print(f'latency: {records}')
+    print('latency: {}'.format(records))
 
     gap = lambda f, s: (f - s)/s
-    print(f'gap: {gap(records[0], records[1])}')
+    print('gap: {}'.format(gap(records[0], records[1])))
 
 
 @click.command()
