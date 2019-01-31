@@ -109,6 +109,7 @@ launch() {
 	echo "Configure spark"
 
 	flintrock run-command $cluster_name 'cp /home/ec2-user/spark/conf/spark-defaults.conf.template /home/ec2-user/spark/conf/spark-defaults.conf'
+	flintrock run-command $cluster_name 'cp /home/ec2-user/spark/conf/log4j.properties.template /home/ec2-user/spark/conf/log4j.properties'
 
 	#flintrock run-command $cluster_name 'echo "spark.driver.extraClassPath /home/ec2-user/alluxio/client/alluxio-1.8.1-client.jar" >> /home/ec2-user/spark/conf/spark-defaults.conf;
 	#echo "spark.executor.extraClassPath /home/ec2-user/alluxio/client/alluxio-1.8.1-client.jar" >> /home/ec2-user/spark/conf/spark-defaults.conf'

@@ -34,7 +34,7 @@ def extract_lateny(path):
 
     files_path = glob.glob('{}/*/scale*'.format(path))
 
-    content_regex = re.compile(r'(?P<date>\S+) (?P<time>\S+) (?P<level>\S+)  Join:\? - End executing query\. Time: (?P<times>\S+)')
+    content_regex = re.compile(r'(?P<date>\S+) (?P<time>\S+) (?P<level>\S+) Join: End executing query\. Time: (?P<times>\S+)')
 
     records = []
     for p in files_path:

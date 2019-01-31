@@ -8,7 +8,7 @@ set -euxo pipefail
 # When the machines are in stop states:
 # aws ec2 modify-instance-attribute --instance-id <instance-id> --ena-support
 
-SCALE=3
+SCALE=1
 QUERY=30
 
 test_bandwidth(){
@@ -59,7 +59,7 @@ test_all(){
 test_all_wapper(){
     cluster_name=$1
 
-    for((i=2;i<=10;i++)); do
+    for((i=10;i<=20;i=i+5)); do
         SCALE=$i
         test_all $cluster_name
     done
@@ -70,7 +70,7 @@ if [[ "$#" -lt 2 ]]; then
     exit 1
 else
     case $1 in
-        all)                    test_all $2
+        all)                    test_all_wapper $2
                                 ;;
         shuffle)                test_shuffle $2
                                 ;;
