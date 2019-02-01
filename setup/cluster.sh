@@ -82,7 +82,8 @@ launch() {
 
 	flintrock run-command --master-only $cluster_name 'curl https://bintray.com/sbt/rpm/rpm > bintray-sbt-rpm.repo; 
 	sudo mv bintray-sbt-rpm.repo /etc/yum.repos.d/;
-	sudo yum -y install python-pip gcc make flex bison byacc sbt'
+	sudo yum -y install python-pip gcc make flex bison byacc sbt
+	sudo pip install click'
 
 	flintrock run-command --master-only $cluster_name 'echo "export PYTHONPATH=\$SPARK_HOME/python:\$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:\$PYTHONPATH" >> /home/ec2-user/.bashrc'
 	
