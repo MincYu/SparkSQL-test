@@ -131,16 +131,15 @@ launch() {
 	'
 
 	flintrock run-command $cluster_name 'echo "export HADOOP_CLASSPATH=/home/ec2-user/alluxio/client/$(ls /home/ec2-user/alluxio/client):\$HADOOP_CLASSPATH" >> /home/ec2-user/.bashrc; source /home/ec2-user/.bashrc'
-
-	# flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/sbin/stop-dfs.sh;/home/ec2-user/hadoop/sbin/start-dfs.sh;/home/ec2-user/alluxio/bin/alluxio format;/home/ec2-user/alluxio/bin/alluxio-start.sh all SudoMount'
 	
 	flintrock run-command $cluster_name "git clone https://github.com/magnific0/wondershaper.git;sudo yum install -y tc;cd wondershaper;sudo make install;sudo systemctl enable wondershaper.service;sudo systemctl start wondershaper.service;"
 
 	# restart 
 	echo "Restart"
 
-	flintrock stop --assume-yes $cluster_name
-	start $cluster_name
+	# flintrock stop --assume-yes $cluster_name
+	# start $cluster_name
+	flintrock run-command $cluster_name 'echo "export HADOOP_CLASSPATH=/home/ec2-user/alluxio/client/$(ls /home/ec2-user/alluxio/client):\$HADOOP_CLASSPATH" >> /home/ec2-user/.bashrc; source /home/ec2-user/.bashrc'
 
 }
 
