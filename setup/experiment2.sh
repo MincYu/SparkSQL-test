@@ -19,12 +19,15 @@ test_bandwidth(){
 
     logs_dir=$1
 
+    workers=(`cat /home/ec2-user/hadoop/conf/slaves`)
+
     echo "----------TESTING BANDWIDTH----------"
     echo "Install iperf3 if needed"
     sudo yum -y install iperf3
-
+    ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no "sudo yum -y install iperf3"
+    ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no "sudo yum -y install iperf3"
+    
     echo "Setup iperf3 sever on a worker"
-    workers=(`cat /home/ec2-user/hadoop/conf/slaves`)
     
     ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no "iperf3 -s > /dev/null 2>&1 &"
 
