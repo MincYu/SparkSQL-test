@@ -4,7 +4,7 @@ launch(){
     cluster_name=$1
     flintrock launch $cluster_name
 
-    flintrock run-command --master-only $cluster_name 'wget https://raw.githubusercontent.com/CheneyYu96/SparkSQL-test/master/setup/cluster2.sh'
+    flintrock run-command --master-only $cluster_name 'wget https://raw.githubusercontent.com/CheneyYu96/SparkSQL-test/master/setup/cluster2.sh; chmod +x cluster2.sh'
 
     flintrock run-command --master-only $cluster_name 'nohup /home/ec2-user/cluster2.sh launch > /home/ec2-user/nohup.out 2>&1 &'
 }
