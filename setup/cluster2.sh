@@ -13,9 +13,9 @@ echo "worker1: ${workers[1]}"
 
 excecute_on_cluster(){
 	command=$1
-	eval $command &
-	ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no $command &
-	ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no $command &
+	eval $command >/dev/null  2>/home/ec2-user/nohup/master.log  &
+	ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no $command >/dev/null  2>/home/ec2-user/nohup/worker0.log  &
+	ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no $command >/dev/null  2>/home/ec2-user/nohup/worker1.log  &
 	wait
 }
 
@@ -65,11 +65,7 @@ launch() {
 	# Register Oracle JDK 1.8
 	echo "Register Oracle JDK 1.8"
 
-	reg_jdk='sudo update-alternatives --install /usr/bin/java java /home/ec2-user/jdk1.8.0_201/bin/java 300;  
-	sudo update-alternatives --install /usr/bin/javac javac /home/ec2-user/jdk1.8.0_201/bin/javac 300;  
-	sudo update-alternatives --install /usr/bin/jar jar /home/ec2-user/jdk1.8.0_201/bin/jar 300;  
-	sudo update-alternatives --install /usr/bin/javah javah /home/ec2-user/jdk1.8.0_201/bin/javah 300;   
-	sudo update-alternatives --install /usr/bin/javap javap /home/ec2-user/jdk1.8.0_201/bin/javap 300; '
+	reg_jdk='sudo update-alternatives --install /usr/bin/java java /home/ec2-user/jdk1.8.0_201/bin/java 300;sudo update-alternatives --install /usr/bin/javac javac /home/ec2-user/jdk1.8.0_201/bin/javac 300;sudo update-alternatives --install /usr/bin/jar jar /home/ec2-user/jdk1.8.0_201/bin/jar 300;sudo update-alternatives --install /usr/bin/javah javah /home/ec2-user/jdk1.8.0_201/bin/javah 300;sudo update-alternatives --install /usr/bin/javap javap /home/ec2-user/jdk1.8.0_201/bin/javap 300; '
 	excecute_on_cluster "$reg_jdk"
 
 	# Install maven
