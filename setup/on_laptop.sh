@@ -17,7 +17,8 @@ start(){
 }
 
 stop(){
-
+    cluster_name=$1
+    flintrock stop $cluster_name
 }
 
 destroy() {

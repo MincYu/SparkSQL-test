@@ -44,23 +44,23 @@ launch() {
 
 	# echo "delete java1.8 installed by flintrock"
 	del_jdk="sudo yum -y remove java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-headless.x86_64"
-	excecute_on_cluster $del_jdk
+	excecute_on_cluster "$del_jdk"
 
 	# echo "delete JAVA_HOME set by flintrock"
 	del_javahome='echo `sed -e '/JAVA_HOME/d' /etc/environment` | sudo tee /etc/environment; source /etc/environment'
-	excecute_on_cluster $del_javahome
+	excecute_on_cluster "$del_javahome"
 
 
 	# download Oracle JDK 1.8
 	dl_oracle_jdk='wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/otn-pub/java/jdk/8u201-b09/42970487e3af4f5aa5bca3f542482c60/jdk-8u201-linux-x64.tar.gz;tar zxvf jdk-8u201-linux-x64.tar.gz;rm jdk-8u201-linux-x64.tar.gz'
-	excecute_on_cluster $dl_oracle_jdk
+	excecute_on_cluster "$dl_oracle_jdk"
 
 	# set Env Variable for Oracle JDK 1.8
 	set_env_var='echo "export JAVA_HOME=\$HOME/jdk1.8.0_201" >> /home/ec2-user/.bashrc;
 	echo "export JRE_HOME=\$JAVA_HOME/jre" >> /home/ec2-user/.bashrc;
 	echo "export CLASSPATH=.:\$JAVA_HOME/lib:\$JRE_HOME/lib" >> /home/ec2-user/.bashrc;
 	echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> /home/ec2-user/.bashrc'
-	excecute_on_cluster $set_env_var
+	excecute_on_cluster "$set_env_var"
 
 	# Register Oracle JDK 1.8
 	echo "Register Oracle JDK 1.8"
@@ -70,7 +70,7 @@ launch() {
 	sudo update-alternatives --install /usr/bin/jar jar /home/ec2-user/jdk1.8.0_201/bin/jar 300;  
 	sudo update-alternatives --install /usr/bin/javah javah /home/ec2-user/jdk1.8.0_201/bin/javah 300;   
 	sudo update-alternatives --install /usr/bin/javap javap /home/ec2-user/jdk1.8.0_201/bin/javap 300; '
-	excecute_on_cluster $reg_jdk
+	excecute_on_cluster "$reg_jdk"
 
 	# Install maven
 	echo "Install maven"
@@ -79,17 +79,17 @@ launch() {
 	tar zxvf apache-maven-3.5.4-bin.tar.gz;
 	rm apache-maven-3.5.4-bin.tar.gz
 	'
-	excecute_on_cluster $mvn1
+	excecute_on_cluster "$mvn1"
 
 	mvn2='echo "export MAVEN_HOME=\$HOME/apache-maven-3.5.4" >> /home/ec2-user/.bashrc;
 	echo "export PATH=\$MAVEN_HOME/bin:\$PATH" >> /home/ec2-user/.bashrc'
-	excecute_on_cluster $mvn2
+	excecute_on_cluster "$mvn2"
 	
 	# Install git & setup
 	echo "Install git"
 
 	Git='sudo yum -y install git;mkdir -p /home/ec2-user/logs'
-	excecute_on_cluster $Git
+	excecute_on_cluster "$Git"
 	
 	echo "Install tools for master"
 
