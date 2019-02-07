@@ -56,30 +56,32 @@ launch() {
 	excecute_on_cluster "$dl_oracle_jdk"
 
 	# set Env Variable for Oracle JDK 1.8
-	set_env_var='echo "export JAVA_HOME=\$HOME/jdk1.8.0_201" >> /home/ec2-user/.bashrc;
-	echo "export JRE_HOME=\$JAVA_HOME/jre" >> /home/ec2-user/.bashrc;
-	echo "export CLASSPATH=.:\$JAVA_HOME/lib:\$JRE_HOME/lib" >> /home/ec2-user/.bashrc;
-	echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> /home/ec2-user/.bashrc'
+	set_env_var='echo "export JAVA_HOME=\$HOME/jdk1.8.0_201" >> /home/ec2-user/.bashrc; echo "export JRE_HOME=\$JAVA_HOME/jre" >> /home/ec2-user/.bashrc;	echo "export CLASSPATH=.:\$JAVA_HOME/lib:\$JRE_HOME/lib" >> /home/ec2-user/.bashrc; echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> /home/ec2-user/.bashrc'
 	excecute_on_cluster "$set_env_var"
+
+	export JAVA_HOME=$HOME/jdk1.8.0_201
+	export JRE_HOME=$JAVA_HOME/jre
+	export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib
+	export PATH=$JAVA_HOME/bin:$PATH
 
 	# Register Oracle JDK 1.8
 	echo "Register Oracle JDK 1.8"
 
-	reg_jdk='sudo update-alternatives --install /usr/bin/java java /home/ec2-user/jdk1.8.0_201/bin/java 300;sudo update-alternatives --install /usr/bin/javac javac /home/ec2-user/jdk1.8.0_201/bin/javac 300;sudo update-alternatives --install /usr/bin/jar jar /home/ec2-user/jdk1.8.0_201/bin/jar 300;sudo update-alternatives --install /usr/bin/javah javah /home/ec2-user/jdk1.8.0_201/bin/javah 300;sudo update-alternatives --install /usr/bin/javap javap /home/ec2-user/jdk1.8.0_201/bin/javap 300; '
+	reg_jdk='sudo update-alternatives --install /usr/bin/java java /home/ec2-user/jdk1.8.0_201/bin/java 300;sudo update-alternatives --install /usr/bin/javac javac /home/ec2-user/jdk1.8.0_201/bin/javac 300;sudo update-alternatives --install /usr/bin/jar jar /home/ec2-user/jdk1.8.0_201/bin/jar 300;sudo update-alternatives --install /usr/bin/javah javah /home/ec2-user/jdk1.8.0_201/bin/javah 300;sudo update-alternatives --install /usr/bin/javap javap /home/ec2-user/jdk1.8.0_201/bin/javap 300;'
 	excecute_on_cluster "$reg_jdk"
 
 	# Install maven
 	echo "Install maven"
 
-	mvn1='wget http://mirrors.ocf.berkeley.edu/apache/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz;
-	tar zxvf apache-maven-3.5.4-bin.tar.gz;
-	rm apache-maven-3.5.4-bin.tar.gz
-	'
+	mvn1='wget http://mirrors.ocf.berkeley.edu/apache/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz; tar zxvf apache-maven-3.5.4-bin.tar.gz; rm apache-maven-3.5.4-bin.tar.gz'
 	excecute_on_cluster "$mvn1"
 
-	mvn2='echo "export MAVEN_HOME=\$HOME/apache-maven-3.5.4" >> /home/ec2-user/.bashrc;
-	echo "export PATH=\$MAVEN_HOME/bin:\$PATH" >> /home/ec2-user/.bashrc'
+	mvn2='echo "export MAVEN_HOME=\$HOME/apache-maven-3.5.4" >> /home/ec2-user/.bashrc; echo "export PATH=\$MAVEN_HOME/bin:\$PATH" >> /home/ec2-user/.bashrc'
 	excecute_on_cluster "$mvn2"
+
+	export MAVEN_HOME=$HOME/apache-maven-3.5.4
+	export PATH=$MAVEN_HOME/bin:$PATH
+
 	
 	# Install git & setup
 	echo "Install git"
@@ -96,15 +98,15 @@ launch() {
 
 	echo "export PYTHONPATH=\$SPARK_HOME/python:\$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:\$PYTHONPATH" >> /home/ec2-user/.bashrc
 
+	export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:$PYTHONPATH
+
 	# Download alluxio source code
 	echo "Download & compile alluxio"
 
 	excecute_on_cluster 'git clone git://github.com/CheneyYu96/alluxio.git'
 
-	excecute_on_cluster "source /home/ec2-user/.bashrc"
-
 	# Compile alluxio source code
-	excecute_on_cluster 'cd /home/ec2-user/alluxio; mvn install -Phadoop-2 -Dhadoop.version=2.8.5 -DskipTests -Dlicense.skip=true -Dcheckstyle.skip=true'
+	excecute_on_cluster 'source /home/ec2-user/.bashrc; cd /home/ec2-user/alluxio; mvn install -Phadoop-2 -Dhadoop.version=2.8.5 -DskipTests -Dlicense.skip=true -Dcheckstyle.skip=true'
 
 	# Download workload & compile
 	echo "Download & compile workload"
@@ -141,6 +143,8 @@ launch() {
 
 	excecute_on_cluster 'echo "export HADOOP_CLASSPATH=/home/ec2-user/alluxio/client/$(ls /home/ec2-user/alluxio/client):\$HADOOP_CLASSPATH" >> /home/ec2-user/.bashrc; source /home/ec2-user/.bashrc'
 	
+	export HADOOP_CLASSPATH=/home/ec2-user/alluxio/client/$(ls /home/ec2-user/alluxio/client):$HADOOP_CLASSPATH
+
 	echo "setup wondershaper"
 	excecute_on_cluster "git clone https://github.com/magnific0/wondershaper.git;sudo yum install -y tc;cd wondershaper;sudo make install;sudo systemctl enable wondershaper.service;sudo systemctl start wondershaper.service;"
 
