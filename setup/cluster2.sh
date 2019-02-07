@@ -1,4 +1,4 @@
-set -euxo pipefail
+set -exo pipefail
 # This script is for one master HDFS, alluxio, spark cluster deployment.
 
 # Prerequisites:
@@ -98,7 +98,7 @@ launch() {
 
 	echo "export PYTHONPATH=\$SPARK_HOME/python:\$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:\$PYTHONPATH" >> /home/ec2-user/.bashrc
 
-	export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip
+	export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:$PYTHONPATH
 
 	# Download alluxio source code
 	echo "Download & compile alluxio"
