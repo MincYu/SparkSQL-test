@@ -101,9 +101,10 @@ launch() {
 
 	excecute_on_cluster 'git clone git://github.com/CheneyYu96/alluxio.git'
 
+	excecute_on_cluster "source /home/ec2-user/.bashrc"
 
 	# Compile alluxio source code
-	excecute_on_cluster 'source /home/ec2-user/.bashrc; cd /home/ec2-user/alluxio; mvn install -Phadoop-2 -Dhadoop.version=2.8.5 -DskipTests -Dlicense.skip=true -Dcheckstyle.skip=true'
+	excecute_on_cluster 'cd /home/ec2-user/alluxio; mvn install -Phadoop-2 -Dhadoop.version=2.8.5 -DskipTests -Dlicense.skip=true -Dcheckstyle.skip=true'
 
 	# Download workload & compile
 	echo "Download & compile workload"
