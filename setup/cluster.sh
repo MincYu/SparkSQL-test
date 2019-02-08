@@ -1,4 +1,4 @@
-set -euo pipefail
+set -euxo pipefail
 # This script is for one master HDFS, alluxio, spark cluster deployment.
 
 # Prerequisites:
