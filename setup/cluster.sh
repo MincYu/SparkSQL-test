@@ -87,6 +87,8 @@ launch() {
 
 	flintrock run-command --master-only $cluster_name 'echo "export PYTHONPATH=\$SPARK_HOME/python:\$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:\$PYTHONPATH" >> /home/ec2-user/.bashrc'
 	
+	echo "setup wondershaper for bandwidth limitation"
+	flintrock run-command $cluster_name "sudo yum -y install tc; git clone  https://github.com/magnific0/wondershaper.git; cd wondershaper; sudo make install; sudo systemctl enable wondershaper.service; sudo systemctl start wondershaper.service"
 
 
 	# Download alluxio source code
@@ -165,7 +167,7 @@ stop() {
 	cluster_name=$1
 	echo "Stop cluster ${cluster_name}"
 
-	flintrock stop $cluster_name
+	flintrock stop --assume-yes $cluster_name
 }
 
 destroy() {

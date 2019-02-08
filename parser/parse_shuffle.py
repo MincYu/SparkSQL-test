@@ -6,7 +6,15 @@ import math
 def extract_info(path):
     name = path.split('/')[-1]
     # files_path = glob.glob(f'{path}/{name}/workerLoad*')
+    print('First shuffle')
     files_path = glob.glob('{}/shuffle/workerLoad*'.format(path))
+    get_shuffle(files_path)
+
+    print('Warm up shuffle')
+    files_path = glob.glob('{}/noshuffle/workerLoad*'.format(path))
+    get_shuffle(files_path)
+
+def get_shuffle(files_path):
     records = {}
     for p in files_path:
         with open(p) as f:
@@ -48,19 +56,33 @@ def extract_lateny(path):
                 typ = p.split('/')[-2]
                 records.append((typ, float(groups['times'])))
 
+    warm_up_files = glob.glob('{}/noshuffle/warm*'.format(path))
+    for p in warm_up_files:
+        with open(p, 'r') as f:
+            for line in f:
+                match = content_regex.match(line)
+                if match is None:
+                    continue
+                groups = match.groupdict()
+                typ = p.split('/')[-1].split('.')[0]
+                records.append((typ, float(groups['times'])))
+
+    records.sort(key=lambda e: e[1], reverse=True)
     print('latency: {}'.format(records))
-    records.sort(key=lambda e: e[0], reverse=True)
 
     gap = lambda f, s: (f - s)/s
-    print('gap: {}'.format(gap(records[0][1], records[1][1])))
+    print('gap: {}'.format(gap(records[0][1], records[-1][1])))
 
 
 @click.command()
 @click.argument('path', type=click.Path(exists=True, resolve_path=True))
 # @click.option('--num', default=1)
 def parse(path):
-    extract_info(path)
-    extract_lateny(path)
+    dir_path = glob.glob('{}/*'.format(path))
+    for d in dir_path:
+        print(d)
+        extract_info(d)
+        extract_lateny(d)
 
 if __name__ == '__main__':
     parse()

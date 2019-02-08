@@ -1,4 +1,5 @@
-set -euxo pipefail
+set -euo pipefail
+set -x
 # This is for cluster with a master and two workers.
 # test bandwidth and do the experiments between two workers
 
@@ -10,6 +11,7 @@ set -euxo pipefail
 
 SCALE=1
 QUERY=30
+BAND_LIMIT=500000
 
 test_bandwidth(){
     cluster_name=$1
@@ -39,14 +41,25 @@ test_all(){
 
     flintrock run-command --master-only $cluster_name 'mkdir -p /home/ec2-user/logs/'${logs_dir}''
 
-    flintrock run-command $cluster_name 'sed -i "/alluxio.user.file.passive.cache.enabled=false/c\alluxio.user.file.passive.cache.enabled=true" /home/ec2-user/alluxio/conf/alluxio-site.properties'
+    # flintrock run-command $cluster_name 'sed -i "/alluxio.user.file.passive.cache.enabled=false/c\alluxio.user.file.passive.cache.enabled=true" /home/ec2-user/alluxio/conf/alluxio-site.properties'
+
+    # flintrock run-command $cluster_name 'sudo wondershaper -c -a eth0; mkdir -p test'
+    flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/auto-test-2.sh free '${SCALE}' '${QUERY}''
 
     echo "Restart alluxio & hdfs"
     flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/restart.sh'
 
-    test_bandwidth $cluster_name $logs_dir
 
     flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/auto-test-2.sh pre '${SCALE}' '${QUERY}''
+
+    echo "Set bandwidth limit"
+    flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/auto-test-2.sh limit '$BAND_LIMIT' '${QUERY}''
+
+    # flintrock run-command --master-only $cluster_name 'export limit='$BAND_LIMIT'; workers=(`cat /home/ec2-user/hadoop/conf/slaves`); ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no "sudo wondershaper -c -a eth0; sudo wondershaper -a eth0 -d $limit -u $limit"'
+    # flintrock run-command --master-only $cluster_name 'export limit='$BAND_LIMIT'; workers=(`cat /home/ec2-user/hadoop/conf/slaves`); ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no "sudo wondershaper -c -a eth0; sudo wondershaper -a eth0 -d $limit -u $limit"'
+
+    # test_bandwidth $cluster_name $logs_dir
+
     flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/auto-test-2.sh all '${SCALE}' '${QUERY}' > /home/ec2-user/logs/'${logs_dir}'/autotest.log'
 
     flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/auto-test-2.sh clean '${SCALE}' '${QUERY}''
@@ -54,15 +67,26 @@ test_all(){
     flintrock run-command --master-only $cluster_name 'mv /home/ec2-user/logs/noshuffle /home/ec2-user/logs/'${logs_dir}'/'
     flintrock run-command --master-only $cluster_name 'mv /home/ec2-user/logs/shuffle /home/ec2-user/logs/'${logs_dir}'/'
 
+    echo "Eliminate bandwidth limit"
+    # flintrock run-command $cluster_name 'sudo wondershaper -c -a eth0'
+    flintrock run-command --master-only $cluster_name '/home/ec2-user/alluxio/bin/auto-test-2.sh free '${SCALE}' '${QUERY}''
+    # flintrock run-command --master-only $cluster_name 'workers=(`cat /home/ec2-user/hadoop/conf/slaves`); ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no "sudo wondershaper -c -a eth0"'
+    # flintrock run-command --master-only $cluster_name 'workers=(`cat /home/ec2-user/hadoop/conf/slaves`); ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no "sudo wondershaper -c -a eth0"'
+
+
 }
 
 test_all_wapper(){
     cluster_name=$1
 
-    for((i=10;i<=20;i=i+5)); do
+
+    # test_all $cluster_name
+    
+    for((i=10;i<=10;i++)); do
         SCALE=$i
         test_all $cluster_name
     done
+
 }
 
 if [[ "$#" -lt 2 ]]; then

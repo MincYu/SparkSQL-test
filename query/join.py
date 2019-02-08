@@ -10,9 +10,11 @@ from utils import *
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--app', type=str, default='Join')
+    # 0: join; 1: aggr
+    parser.add_argument('--query', type=int, default=0)
     return parser.parse_args()
 
-def join_two_tables(args):
+def run_sql(args):
 	spark = SparkSession.builder.appName(args.app).getOrCreate()
 	sc = spark.sparkContext
 	sc.setLogLevel("TRACE")
@@ -33,12 +35,12 @@ def join_two_tables(args):
 	order_df.createOrReplaceTempView('orders')
 	item_df.createOrReplaceTempView('lineitem')
 
+	query_list = [join_tables(), aggregation()]
+
+	query = query_list[args.query]
+
 	# query
-	result_df = spark.sql(
-		''' 
-		select * from ORDERS, LINEITEM where l_orderkey = o_orderkey
-		'''
-		)
+	result_df = spark.sql(query)
 
 	logger.info('Begin executing query')
 	begin_time = now()
@@ -50,7 +52,13 @@ def join_two_tables(args):
 
 	spark.catalog.clearCache()
 
+def join_tables():
+	return "select * from ORDERS, LINEITEM where l_orderkey = o_orderkey"
+
+def aggregation():
+	return "select l_shipmode, count(l_shipmode) from LINEITEM group by l_shipmode"
 
 if __name__ == '__main__':
 	args = get_args()
-	join_two_tables(args)
+	run_sql(args)
+
