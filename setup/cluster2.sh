@@ -13,9 +13,9 @@ echo "worker1: ${workers[1]}"
 
 excecute_on_cluster(){
 	command=$1
-	eval $command >/dev/null  2>/home/ec2-user/nohup/master.log  &
-	ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no $command >/dev/null  2>/home/ec2-user/nohup/worker0.log  &
-	ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no $command >/dev/null  2>/home/ec2-user/nohup/worker1.log  &
+	eval "$command;echo "master finished" " >/dev/null  2>/home/ec2-user/nohup/master.log  &
+	ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no "$command;echo "worker0 finished" " >/dev/null  2>/home/ec2-user/nohup/worker0.log  &
+	ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no "$command;echo "worker1 finished" " >/dev/null  2>/home/ec2-user/nohup/worker1.log  &
 	wait
 }
 
@@ -138,15 +138,14 @@ launch() {
 	    <name>fs.alluxio.impl</name>
 	    <value>alluxio.hadoop.FileSystem</value>
 	  </property>
-	</configuration>" >> /home/ec2-user/hadoop/conf/core-site.xml
-	'
+	</configuration>" >> /home/ec2-user/hadoop/conf/core-site.xml'
 
 	excecute_on_cluster 'echo "export HADOOP_CLASSPATH=/home/ec2-user/alluxio/client/$(ls /home/ec2-user/alluxio/client):\$HADOOP_CLASSPATH" >> /home/ec2-user/.bashrc; source /home/ec2-user/.bashrc'
 	
 	export HADOOP_CLASSPATH=/home/ec2-user/alluxio/client/$(ls /home/ec2-user/alluxio/client):$HADOOP_CLASSPATH
 
 	echo "setup wondershaper"
-	excecute_on_cluster "git clone https://github.com/magnific0/wondershaper.git;sudo yum install -y tc;cd wondershaper;sudo make install;sudo systemctl enable wondershaper.service;sudo systemctl start wondershaper.service;"
+	excecute_on_cluster "git clone https://github.com/magnific0/wondershaper.git; sudo yum install -y tc;cd wondershaper;sudo make install;sudo systemctl enable wondershaper.service;sudo systemctl start wondershaper.service;"
 
 	# restart 
 	echo "Restart"
