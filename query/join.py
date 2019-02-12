@@ -10,7 +10,7 @@ from utils import *
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--app', type=str, default='Join')
-    # 0: join; 1: aggr
+    # 0: join; 1: aggr; 2:filter
     parser.add_argument('--query', type=int, default=0)
     return parser.parse_args()
 
@@ -35,7 +35,7 @@ def run_sql(args):
 	order_df.createOrReplaceTempView('orders')
 	item_df.createOrReplaceTempView('lineitem')
 
-	query_list = [join_tables(), aggregation()]
+	query_list = [join_tables(), aggregation(), filter()]
 
 	query = query_list[args.query]
 
@@ -57,6 +57,9 @@ def join_tables():
 
 def aggregation():
 	return "select l_shipmode, count(l_shipmode) from LINEITEM group by l_shipmode"
+
+def filter():
+	return "select * from LINEITEM where l_discount >= 0.05 and l_discount <= 0.1"
 
 if __name__ == '__main__':
 	args = get_args()
