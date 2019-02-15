@@ -13,9 +13,9 @@ echo "worker1: ${workers[1]}"
 
 excecute_on_cluster(){
 	command=$1
-	eval "$command;echo "master finished" " >/dev/null  2>/home/ec2-user/nohup/master.log  &
-	ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no "$command;echo "worker0 finished" " >/dev/null  2>/home/ec2-user/nohup/worker0.log  &
-	ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no "$command;echo "worker1 finished" " >/dev/null  2>/home/ec2-user/nohup/worker1.log  &
+	eval "$command" >/dev/null  2>/home/ec2-user/nohup/master.log  &
+	ssh ec2-user@${workers[0]} -o StrictHostKeyChecking=no "$command" >/dev/null  2>/home/ec2-user/nohup/worker0.log  &
+	ssh ec2-user@${workers[1]} -o StrictHostKeyChecking=no "$command" >/dev/null  2>/home/ec2-user/nohup/worker1.log  &
 	wait
 }
 
@@ -147,6 +147,8 @@ launch() {
 	echo "setup wondershaper"
 	excecute_on_cluster "git clone https://github.com/magnific0/wondershaper.git; sudo yum install -y tc;cd wondershaper;sudo make install;sudo systemctl enable wondershaper.service;sudo systemctl start wondershaper.service;"
 
+	echo "setup iperf3"
+	excecute_on_cluster "sudo yum install -y iperf3"
 	# restart 
 	echo "Restart"
 
