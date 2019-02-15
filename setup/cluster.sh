@@ -15,7 +15,7 @@ configure_alluxio(){
 
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.copyfromlocal.write.location.policy.class=alluxio.client.file.policy.TimerPolicy" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.delete.unchecked=true" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
-	flintrock run-command $cluster_name 'echo "alluxio.user.file.passive.cache.enabled=false" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
+	# flintrock run-command $cluster_name 'echo "alluxio.user.file.passive.cache.enabled=false" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
 
 	flintrock run-command $cluster_name 'echo "alluxio.master.hostname=$(cat /home/ec2-user/hadoop/conf/masters)" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;
 	echo "alluxio.underfs.address=hdfs://$(cat /home/ec2-user/hadoop/conf/masters):9000/alluxio/root/" >> /home/ec2-user/alluxio/conf/alluxio-site.properties'
@@ -75,6 +75,8 @@ launch() {
 
 	flintrock run-command $cluster_name 'sudo yum -y install git'
 
+	flintrock run-command $cluster_name "sudo yum -y install iperf3"
+
 	flintrock run-command $cluster_name 'mkdir -p /home/ec2-user/logs'
 
 
@@ -86,10 +88,6 @@ launch() {
 	sudo pip install click'
 
 	flintrock run-command --master-only $cluster_name 'echo "export PYTHONPATH=\$SPARK_HOME/python:\$SPARK_HOME/python/lib/py4j-0.10.7-src.zip:\$PYTHONPATH" >> /home/ec2-user/.bashrc'
-	
-	echo "setup wondershaper for bandwidth limitation"
-	flintrock run-command $cluster_name "sudo yum -y install tc; git clone  https://github.com/magnific0/wondershaper.git; cd wondershaper; sudo make install; sudo systemctl enable wondershaper.service; sudo systemctl start wondershaper.service"
-
 
 	# Download alluxio source code
 	echo "Download & compile alluxio"
@@ -136,6 +134,9 @@ launch() {
 
 	# flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/sbin/stop-dfs.sh;/home/ec2-user/hadoop/sbin/start-dfs.sh;/home/ec2-user/alluxio/bin/alluxio format;/home/ec2-user/alluxio/bin/alluxio-start.sh all SudoMount'
 	
+	echo "setup wondershaper for bandwidth limitation"
+	flintrock run-command $cluster_name "sudo yum -y install tc; git clone  https://github.com/magnific0/wondershaper.git; cd wondershaper; sudo make install;" # sudo systemctl enable wondershaper.service; sudo systemctl start wondershaper.service"
+
 	# restart 
 	echo "Restart"
 
