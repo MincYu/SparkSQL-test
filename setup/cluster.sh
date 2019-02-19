@@ -5,7 +5,21 @@ set -euxo pipefail
 #     1. Install flintrock:
 #         https://github.com/nchammas/flintrock#installation
 #     2. After 1, make sure you have an AWS account, set your AWS Key Info in your shell and run "flintrock configure" to configure your cluster(Pls refer to https://heather.miller.am/blog/launching-a-spark-cluster-part-1.html#setting-up-flintrock-and-amazon-web-services)
+manual_restart(){
+	cluster_name=$1
+	flintrock run-command $cluster_name ''
 
+	echo "stop all"
+	flintrock run-command --master-only $cluster_name '/home/ec2-user/spark/sbin/stop-all.sh;/home/ec2-user/alluxio/bin/alluxio-stop.sh all;/home/ec2-user/hadoop/sbin/stop-dfs.sh;'
+
+	echo "configure"
+	flintrock run-command --master-only $cluster_name 'echo "export JAVA_HOME="/home/ec2-user/jdk1.8.0_201"" >> /home/ec2-user/hadoop/conf/hadoop-env.sh; /home/ec2-user/hadoop/bin/hdfs namenode -format -nonInteractive || true;'
+	
+	echo "restart all"
+	flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/sbin/start-dfs.sh; /home/ec2-user/alluxio/bin/alluxio format; /home/ec2-user/alluxio/bin/alluxio-start.sh all SudoMount; /home/ec2-user/spark/sbin/start-all.sh;'
+
+	echo "manual restart finnished"
+}
 configure_alluxio(){
 	# configure alluxio
 	cluster_name=$1
@@ -53,11 +67,7 @@ launch() {
 	# Register Oracle JDK 1.8
 	echo "Register Oracle JDK 1.8"
 
-	flintrock run-command $cluster_name 'sudo update-alternatives --install /usr/bin/java java /home/ec2-user/jdk1.8.0_201/bin/java 300;  
-	sudo update-alternatives --install /usr/bin/javac javac /home/ec2-user/jdk1.8.0_201/bin/javac 300;  
-	sudo update-alternatives --install /usr/bin/jar jar /home/ec2-user/jdk1.8.0_201/bin/jar 300;  
-	sudo update-alternatives --install /usr/bin/javah javah /home/ec2-user/jdk1.8.0_201/bin/javah 300;   
-	sudo update-alternatives --install /usr/bin/javap javap /home/ec2-user/jdk1.8.0_201/bin/javap 300; '
+	flintrock run-command $cluster_name 'sudo update-alternatives --install /usr/bin/java java /home/ec2-user/jdk1.8.0_201/bin/java 300;sudo update-alternatives --install /usr/bin/javac javac /home/ec2-user/jdk1.8.0_201/bin/javac 300;sudo update-alternatives --install /usr/bin/jar jar /home/ec2-user/jdk1.8.0_201/bin/jar 300;sudo update-alternatives --install /usr/bin/javah javah /home/ec2-user/jdk1.8.0_201/bin/javah 300;sudo update-alternatives --install /usr/bin/javap javap /home/ec2-user/jdk1.8.0_201/bin/javap 300;'
 
 	# Install maven
 	echo "Install maven"
@@ -140,8 +150,9 @@ launch() {
 	# restart 
 	echo "Restart"
 
-	flintrock stop --assume-yes $cluster_name
-	start $cluster_name
+	# flintrock stop --assume-yes $cluster_name
+	# start $cluster_name
+	manual_restart $cluster_name
 
 }
 
@@ -149,7 +160,7 @@ start() {
 	cluster_name=$1
 
 	echo "Start cluster ${cluster_name}"
-	flintrock start $cluster_name
+	# flintrock start $cluster_name
 
 	echo "Configure alluxio"
 	flintrock run-command $cluster_name 'cp /home/ec2-user/hadoop/conf/masters /home/ec2-user/alluxio/conf/masters;
