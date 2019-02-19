@@ -7,7 +7,6 @@ set -euxo pipefail
 #     2. After 1, make sure you have an AWS account, set your AWS Key Info in your shell and run "flintrock configure" to configure your cluster(Pls refer to https://heather.miller.am/blog/launching-a-spark-cluster-part-1.html#setting-up-flintrock-and-amazon-web-services)
 manual_restart(){
 	cluster_name=$1
-	flintrock run-command $cluster_name ''
 
 	echo "stop all"
 	flintrock run-command --master-only $cluster_name '/home/ec2-user/spark/sbin/stop-all.sh;/home/ec2-user/alluxio/bin/alluxio-stop.sh all;/home/ec2-user/hadoop/sbin/stop-dfs.sh;'
