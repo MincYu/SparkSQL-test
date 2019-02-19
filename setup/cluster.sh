@@ -12,7 +12,9 @@ manual_restart(){
 	flintrock run-command --master-only $cluster_name '/home/ec2-user/spark/sbin/stop-all.sh;/home/ec2-user/alluxio/bin/alluxio-stop.sh all;/home/ec2-user/hadoop/sbin/stop-dfs.sh;'
 
 	echo "configure"
-	flintrock run-command --master-only $cluster_name 'echo "export JAVA_HOME="/home/ec2-user/jdk1.8.0_201"" >> /home/ec2-user/hadoop/conf/hadoop-env.sh; /home/ec2-user/hadoop/bin/hdfs namenode -format -nonInteractive || true;'
+	flintrock run-command $cluster_name 'echo "export JAVA_HOME="/home/ec2-user/jdk1.8.0_201"" >> /home/ec2-user/hadoop/conf/hadoop-env.sh;'
+
+	flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/bin/hdfs namenode -format -nonInteractive || true;'
 	
 	echo "restart all"
 	flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/sbin/start-dfs.sh; /home/ec2-user/alluxio/bin/alluxio format; /home/ec2-user/alluxio/bin/alluxio-start.sh all SudoMount; /home/ec2-user/spark/sbin/start-all.sh;'
