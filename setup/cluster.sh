@@ -227,6 +227,8 @@ else
         						;;
 		conf_alluxio)			configure_alluxio $2
 								;;             
+		man_start)				manual_restart $2
+								;;
         * )                     usage
     esac
 fi
