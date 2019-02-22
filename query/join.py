@@ -35,9 +35,9 @@ def run_sql(args):
 	order_df.createOrReplaceTempView('orders')
 	item_df.createOrReplaceTempView('lineitem')
 
-	query_list = [join_tables(), aggregation(), filter()]
+	query_list = [join_tables, aggregation, filter_lineitem]
 
-	query = query_list[args.query]
+	query = query_list[args.query]()
 
 	# query
 	result_df = spark.sql(query)
@@ -58,7 +58,7 @@ def join_tables():
 def aggregation():
 	return "select l_shipmode, count(l_shipmode) from LINEITEM group by l_shipmode"
 
-def filter():
+def filter_lineitem():
 	return "select * from LINEITEM where l_discount >= 0.05 and l_discount <= 0.1"
 
 if __name__ == '__main__':
