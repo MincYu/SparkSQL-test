@@ -145,8 +145,8 @@ launch() {
 
 	# flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/sbin/stop-dfs.sh;/home/ec2-user/hadoop/sbin/start-dfs.sh;/home/ec2-user/alluxio/bin/alluxio format;/home/ec2-user/alluxio/bin/alluxio-start.sh all SudoMount'
 	
-	echo "setup wondershaper for bandwidth limitation"
-	flintrock run-command $cluster_name "sudo yum -y install tc; git clone  https://github.com/magnific0/wondershaper.git; cd wondershaper; sudo make install;" # sudo systemctl enable wondershaper.service; sudo systemctl start wondershaper.service"
+	# echo "setup wondershaper for bandwidth limitation"
+	# flintrock run-command $cluster_name "sudo yum -y install tc; git clone  https://github.com/magnific0/wondershaper.git; cd wondershaper; sudo make install;" # sudo systemctl enable wondershaper.service; sudo systemctl start wondershaper.service"
 
 	# restart 
 	echo "Restart"

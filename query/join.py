@@ -24,7 +24,7 @@ def run_sql(args):
 
 	# read data
 	logger.info('Begin reading data')
-	input_dir = 'alluxio://{}:19998/tpch'.format(get_master())
+	input_dir = 'alluxio://{}:19998/home/ec2-user/data'.format(get_master())
 
 	order_df = spark.createDataFrame(convert_orders(sc.textFile('{}/orders.tbl'.format(input_dir))))
 	item_df = spark.createDataFrame(convert_lineitem(sc.textFile('{}/lineitem.tbl'.format(input_dir))))
