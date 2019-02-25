@@ -16,6 +16,8 @@ convert_lineitem = lambda rdd: rdd.map(splitter).map(lambda p: Row(l_orderkey=p[
 	l_quantity=p[4], l_extendedprice=p[5], l_discount=p[6], l_tax=p[7], l_returnflag=p[8], l_linestatus=p[9], l_shipdate=p[10], \
 	l_commitdate=p[11], l_receiptdate=p[12], l_shipinstruct=p[13], l_shipmode=p[14], l_comment=p[15]))
 
+convert_part_lineitem = lambda rdd: rdd.map(splitter).map(lambda p: Row(l_quantity=p[0],l_extendedprice=p[1], l_discount=p[2], l_tax=p[3], l_returnflag=p[4], l_linestatus=p[5], l_shipdate=p[6]))
+
 def get_master():
 	with open('/home/ec2-user/hadoop/conf/masters', 'r') as f:
 		return f.readline().rstrip()
