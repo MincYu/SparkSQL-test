@@ -26,7 +26,7 @@ def run_sql(args):
 	logger.info('Begin reading data')
 	input_dir = 'alluxio://{}:19998/home/ec2-user/data'.format(get_master())
 
-	order_df = spark.createDataFrame(convert_orders(sc.textFile('{}/orders.tbl'.format(input_dir))))
+	# order_df = spark.createDataFrame(convert_orders(sc.textFile('{}/orders.tbl'.format(input_dir))))
 	item_df = spark.createDataFrame(convert_lineitem(sc.textFile('{}/lineitem.tbl'.format(input_dir))))
 
 	item_part_df = spark.createDataFrame(convert_part_lineitem(sc.textFile('{}/lineitem_part.tbl'.format(input_dir))))
@@ -34,7 +34,7 @@ def run_sql(args):
 	logger.info('Finish reading data')
 
 	# create views
-	order_df.createOrReplaceTempView('orders')
+	# order_df.createOrReplaceTempView('orders')
 	item_df.createOrReplaceTempView('lineitem')
 	item_part_df.createOrReplaceTempView('lineitem_part')
 
