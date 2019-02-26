@@ -28,7 +28,7 @@ def run_sql(args):
 
 	item_df = spark.createDataFrame(convert_lineitem(sc.textFile('{}/lineitem.tbl'.format(input_dir))))
 
-	item_part_df = item_df.select(concat_ws("|", item_df[4], item_df[5], item_df[6], item_df[7], item_df[8], item_df[9], item_df[10]))
+	item_part_df = item_df.select(concat_ws("|", item_df['l_quantity'], item_df['l_extendedprice'], item_df['l_discount'], item_df['l_tax'], item_df['l_returnflag'], item_df['l_linestatus'], item_df['l_shipdate']))
 
 	item_part_df.write.text('{}/lineitem_part.tbl'.format(input_dir), lineSep="|\n")
 
