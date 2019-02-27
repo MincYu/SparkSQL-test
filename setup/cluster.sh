@@ -112,9 +112,10 @@ launch() {
 
 	# Download workload & compile
 	echo "Download & compile workload"
-	flintrock run-command --master-only $cluster_name 'git clone git://github.com/CheneyYu96/SparkSQL-test.git'
-	flintrock run-command --master-only $cluster_name 'mv /home/ec2-user/SparkSQL-test /home/ec2-user/tpch-spark'
+	flintrock run-command --master-only $cluster_name 'git clone git://github.com/CheneyYu96/tpch-spark.git'
+	# flintrock run-command --master-only $cluster_name 'mv /home/ec2-user/SparkSQL-test /home/ec2-user/tpch-spark'
 	flintrock run-command --master-only $cluster_name 'cd /home/ec2-user/tpch-spark/dbgen; make'
+	flintrock run-command --master-only $cluster_name 'cd /home/ec2-user/tpch-spark/; sbt package'
 
 	configure_alluxio $cluster_name
 
