@@ -50,7 +50,7 @@ def get_latency_with_id(files_path):
                 records[name] = float(groups['times'])
     return records
 
-def mkdir(newdir):
+def _mkdir(newdir):
     """
     works the way a good mkdir should :)
         - already exists, silently complete

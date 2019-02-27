@@ -15,7 +15,7 @@ rc('mathtext', default='regular')
 
 def extract_info(path):
     group = path.split('/')[-1]
-    mkdir('throuput/{}'.format(group))
+    _mkdir('throuput/{}'.format(group))
 
     files_path = glob.glob('{}/*'.format(path))
 
@@ -77,7 +77,7 @@ def parse(path):
     for d in dir_path:
         extract_info(d)
 
-def mkdir(newdir):
+def _mkdir(newdir):
     """
     works the way a good mkdir should :)
         - already exists, silently complete
