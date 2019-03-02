@@ -1,9 +1,20 @@
 import glob
 import re
 import math
+from os.path import isdir
+from os import mkdir
+import os
 
 # content_regex = re.compile(r'(?P<date>\S+) (?P<time>\S+) (?P<level>\S+) Join: End executing query\. Time: (?P<times>\S+)')
 content_regex = re.compile(r'(?P<date>\S+) (?P<time>\S+) (?P<level>\S+) TpchQuery: End executing query\. Time: (?P<times>\S+)')
+
+def get_shuffle_with_file(files_path):
+    records = {}
+    for f in files_path:
+        name = f.split('/')[-1].split('_')[1].split('.')[0]
+        s = list(get_shuffle_with_id([f]).values())[0]
+        records[name] = s
+    return records
 
 def get_shuffle_with_id(files_path):
     records = {}
@@ -50,6 +61,8 @@ def get_latency_with_id(files_path):
                 records[name] = float(groups['times'])
     return records
 
+gap = lambda f, s: round((f - s)/s, 4)
+
 def mkdir(newdir):
     """
     works the way a good mkdir should :)
@@ -67,6 +80,6 @@ def mkdir(newdir):
     else:
         head, tail = os.path.split(newdir)
         if head and not os.path.isdir(head):
-            _mkdir(head)
+            mkdir(head)
         if tail:
             os.mkdir(newdir)

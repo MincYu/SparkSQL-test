@@ -73,10 +73,19 @@ def parse_all_footprint(path):
 
     for f in folder_path:
         name = f.split('/')[-1]
+        print(name)
         files_path = glob.glob('{}/shuffle/workerLoad*'.format(f))
         shuffle_data = get_shuffle_with_id(files_path)
 
-        draw_footprint(shuffle_data, name)
+        files_path = glob.glob('{}/shuffle/scale*'.format(f))
+        shuffle_l = get_latency_with_id(files_path)
+
+        files_path = glob.glob('{}/noshuffle/scale*'.format(f))
+        noshuffle_l = get_latency_with_id(files_path)
+
+        print(f'shuffle: {shuffle_l}; noshuffle: {noshuffle_l}; gap: {gap(list(shuffle_l.values())[0], list(noshuffle_l.values())[0])}')
+
+        draw_footprint(shuffle_data, f'footprintjvm/{name}')
 
 @click.command()
 @click.argument('path', type=click.Path(exists=True, resolve_path=True))
@@ -97,7 +106,7 @@ def mul_process_footprint(path):
     noshuffle_l = get_latency_with_id(files_path)
 
     print(f'shuffle: {shuffle_l}; nonshuffle: {noshuffle_l}')
-    draw_footprint(shuffle_data, 'fig/en_cache')
+    # draw_footprint(shuffle_data, 'fig/en_cache')
 
 def draw_box_plot(shuffle_latency, noshuffle_latency):
     fig = plt.figure()
@@ -142,13 +151,13 @@ def draw_footprint(shuffle_data, path='fig/footprint'):
     print(y_max)
 
     ax.set_xlim(0, index_num)
-    ax.set_ylim(0, 3000)
+    ax.set_ylim(0, 3500)
     ax.set_xlabel("Second")
     ax.set_ylabel("Data transfer rate (Mbps)")
-    plt.show()
-    # plt.savefig(f'{path}.pdf')
+    # plt.show()
+    plt.savefig(f'{path}.pdf')
 
 if __name__ == '__main__':
-    # parse_all_footprint()
+    parse_all_footprint()
     # parse_all_latency()
-    mul_process_footprint()
+    # mul_process_footprint()
