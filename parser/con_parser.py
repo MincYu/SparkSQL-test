@@ -57,7 +57,6 @@ def draw_error_bars(shuffling, noshuffling):
     plt.errorbar(index + bar_width, yn, en, linestyle='--', fmt='-', capsize=5, capthick=1, label='Non-shuffling')
 
     plt.xticks(index)
-    # plt.grid()
     plt.legend(loc=2)
 
     plt.xlabel('concurrency')
@@ -98,10 +97,6 @@ def mul_process_footprint(path):
     files_path = glob.glob('{}/shuffle/scale*'.format(path))
     shuffle_l = get_latency_with_id(files_path)
 
-    # print('noshuffle')
-    # files_path = glob.glob('{}/noshuffle/workerLoad*'.format(path))
-    # shuffle_data = get_shuffle_with_id(files_path)
-
     files_path = glob.glob('{}/noshuffle/scale*'.format(path))
     noshuffle_l = get_latency_with_id(files_path)
 
@@ -131,22 +126,19 @@ def draw_footprint(shuffle_data, path='fig/footprint'):
     index_num = max([len(i) for i in shuffle_data.values()]) + 1
 
     for i, amount in shuffle_data.items():
-        # labels.append(i)
         whole_amount = [ int(a * 8 * 1024 * 1024 / 1000000) for a in amount]
         [whole_amount.append(0) for j in range(index_num - len(whole_amount))]
 
         shuffle_list.append(whole_amount)
 
     [labels.append(f'job {i}') for i in range(1, len(shuffle_list) + 1)]
-    # fig =plt.figure(figsize = (12,6))
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
     index = range(index_num)
 
-    ax.stackplot(index, *shuffle_list) #, labels=labels)
+    ax.stackplot(index, *shuffle_list)
 
-    # ax.legend(loc=2)
     y_max = max([max(i) for i in shuffle_list])
     print(y_max)
 
