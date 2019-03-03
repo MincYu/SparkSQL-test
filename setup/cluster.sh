@@ -30,6 +30,7 @@ configure_alluxio(){
 
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.copyfromlocal.write.location.policy.class=alluxio.client.file.policy.TimerPolicy" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.write.location.policy.class=alluxio.client.file.policy.TimerPolicy" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
+	flintrock run-command $cluster_name 'echo "alluxio.worker.hostname=localhost" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.delete.unchecked=true" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.passive.cache.enabled=false" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.replication.min=2" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
@@ -127,9 +128,6 @@ launch() {
 	flintrock run-command $cluster_name 'cp /home/ec2-user/spark/conf/spark-defaults.conf.template /home/ec2-user/spark/conf/spark-defaults.conf'
 	flintrock run-command $cluster_name 'cp /home/ec2-user/spark/conf/log4j.properties.template /home/ec2-user/spark/conf/log4j.properties'
 
-	#flintrock run-command $cluster_name 'echo "spark.driver.extraClassPath /home/ec2-user/alluxio/client/alluxio-1.8.1-client.jar" >> /home/ec2-user/spark/conf/spark-defaults.conf;
-	#echo "spark.executor.extraClassPath /home/ec2-user/alluxio/client/alluxio-1.8.1-client.jar" >> /home/ec2-user/spark/conf/spark-defaults.conf'
-	
 	flintrock run-command $cluster_name 'echo "spark.driver.extraClassPath /home/ec2-user/alluxio/client/$(ls /home/ec2-user/alluxio/client)" >> /home/ec2-user/spark/conf/spark-defaults.conf;
 	echo "spark.executor.extraClassPath /home/ec2-user/alluxio/client/$(ls /home/ec2-user/alluxio/client)" >> /home/ec2-user/spark/conf/spark-defaults.conf'
 
@@ -236,5 +234,4 @@ else
         * )                     usage
     esac
 fi
-
 
