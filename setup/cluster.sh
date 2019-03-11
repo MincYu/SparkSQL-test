@@ -29,12 +29,12 @@ configure_alluxio(){
 	flintrock run-command $cluster_name 'cd /home/ec2-user; cp /home/ec2-user/alluxio/conf/alluxio-site.properties.template /home/ec2-user/alluxio/conf/alluxio-site.properties'
 
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.copyfromlocal.write.location.policy.class=alluxio.client.file.policy.TimerPolicy" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
-	flintrock run-command $cluster_name 'echo "alluxio.user.file.write.location.policy.class=alluxio.client.file.policy.TimerPolicy" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
-	flintrock run-command $cluster_name 'echo "alluxio.worker.hostname=localhost" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
+	# flintrock run-command $cluster_name 'echo "alluxio.user.file.write.location.policy.class=alluxio.client.file.policy.TimerPolicy" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
+	# flintrock run-command $cluster_name 'echo "alluxio.worker.hostname=localhost" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.delete.unchecked=true" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.passive.cache.enabled=false" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
 	flintrock run-command $cluster_name 'echo "alluxio.user.file.replication.min=2" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
-	flintrock run-command $cluster_name 'echo "alluxio.worker.memory.size=24GB" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
+	flintrock run-command $cluster_name 'echo "alluxio.worker.memory.size=26GB" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;'
 
 	flintrock run-command $cluster_name 'echo "alluxio.master.hostname=$(cat /home/ec2-user/hadoop/conf/masters)" >> /home/ec2-user/alluxio/conf/alluxio-site.properties;
 	echo "alluxio.underfs.address=hdfs://$(cat /home/ec2-user/hadoop/conf/masters):9000/alluxio/root/" >> /home/ec2-user/alluxio/conf/alluxio-site.properties'
@@ -110,12 +110,11 @@ launch() {
 	flintrock run-command $cluster_name 'git clone git://github.com/CheneyYu96/alluxio.git'
 
 	# Compile alluxio source code
-	flintrock run-command $cluster_name 'cd /home/ec2-user/alluxio;
-	mvn install -Phadoop-2 -Dhadoop.version=2.8.5 -DskipTests -Dlicense.skip=true -Dcheckstyle.skip=true'
+	flintrock run-command $cluster_name 'cd /home/ec2-user/alluxio; git pull; mvn install -Phadoop-2 -Dhadoop.version=2.8.5 -DskipTests -Dlicense.skip=true -Dcheckstyle.skip=true'
 
 	# Download workload & compile
 	echo "Download & compile workload"
-	flintrock run-command --master-only $cluster_name 'git clone git://github.com/CheneyYu96/tpch-spark.git'
+	flintrock run-command $cluster_name 'git clone git://github.com/CheneyYu96/tpch-spark.git'
 	# flintrock run-command --master-only $cluster_name 'mv /home/ec2-user/SparkSQL-test /home/ec2-user/tpch-spark'
 	flintrock run-command --master-only $cluster_name 'cd /home/ec2-user/tpch-spark/dbgen; make'
 	flintrock run-command --master-only $cluster_name 'cd /home/ec2-user/tpch-spark/; sbt assembly'
@@ -148,7 +147,7 @@ launch() {
 	# flintrock run-command --master-only $cluster_name '/home/ec2-user/hadoop/sbin/stop-dfs.sh;/home/ec2-user/hadoop/sbin/start-dfs.sh;/home/ec2-user/alluxio/bin/alluxio format;/home/ec2-user/alluxio/bin/alluxio-start.sh all SudoMount'
 	
 	# echo "setup wondershaper for bandwidth limitation"
-	# flintrock run-command $cluster_name "sudo yum -y install tc; git clone  https://github.com/magnific0/wondershaper.git; cd wondershaper; sudo make install;" # sudo systemctl enable wondershaper.service; sudo systemctl start wondershaper.service"
+	flintrock run-command $cluster_name "sudo yum -y install tc; git clone  https://github.com/magnific0/wondershaper.git; cd wondershaper; sudo make install;" # sudo systemctl enable wondershaper.service; sudo systemctl start wondershaper.service"
 
 	# restart 
 	echo "Restart"
