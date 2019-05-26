@@ -110,7 +110,7 @@ launch() {
 	flintrock run-command $cluster_name 'git clone git://github.com/CheneyYu96/alluxio.git'
 
 	# Compile alluxio source code
-	flintrock run-command $cluster_name 'cd /home/ec2-user/alluxio; git checkout base-ver; git pull; mvn install -Phadoop-2 -Dhadoop.version=2.8.5 -Dmaven.javadoc.skip -DskipTests -Dlicense.skip=true -Dcheckstyle.skip=true -Dfindbugs.skip=true'
+	flintrock run-command $cluster_name 'cd /home/ec2-user/alluxio; git checkout base-ver-fr; git pull; mvn install -Phadoop-2 -Dhadoop.version=2.8.5 -Dmaven.javadoc.skip -DskipTests -Dlicense.skip=true -Dcheckstyle.skip=true -Dfindbugs.skip=true'
 
 	# Download workload & compile
 	echo "Download & compile workload"
