@@ -119,6 +119,13 @@ launch() {
 	flintrock run-command --master-only $cluster_name 'cd /home/ec2-user/tpch-spark/dbgen; make'
 	flintrock run-command --master-only $cluster_name 'cd /home/ec2-user/tpch-spark/; sbt assembly'
 
+
+	echo "Download & compile parquet-cli"
+	flintrock run-command $cluster_name 'git clone https://github.com/apache/parquet-mr.git; cd /home/ec2-user/parquet-mr/parquet-cli; mvn clean install -DskipTests'
+
+	echo "Replace parquet jars in Spark"
+	flintrock run-command $cluster_name 'cp /home/ec2-user/alluxio/jars/* /home/ec2-user/spark/jars/'
+
 	configure_alluxio $cluster_name
 
 	# configure spark
